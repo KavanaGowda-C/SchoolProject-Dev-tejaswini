@@ -29,7 +29,6 @@ public class SchoolServiceImpl implements SchoolService {
     @Override
     public ResponseEntity<?> registerSchool(SchoolSignupRequest req) {
 
-        // 1. All fields mandatory
         if (isBlank(req.getSchoolName()) || isBlank(req.getSchoolId()) ||
                 isBlank(req.getEmail()) || isBlank(req.getPassword()) ||
                 isBlank(req.getConfirmPassword()) || isBlank(req.getMobileNumber()) ||
@@ -40,26 +39,22 @@ public class SchoolServiceImpl implements SchoolService {
                     .body("All fields are mandatory");
         }
 
-        // 2. Password & Confirm Password must match
         if (!req.getPassword().equals(req.getConfirmPassword())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Password and Confirm Password do not match");
         }
 
-        // 3. Password rules: 8+, upper, lower, number, special
         String pwdRule = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{8,}$";
         if (!req.getPassword().matches(pwdRule)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Password must be at least 8 characters and contain one uppercase, one lowercase, one number and one special character");
         }
 
-        // 4. Mobile must be exactly 10 digits
         if (!req.getMobileNumber().matches("^[0-9]{10}$")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Mobile number must be exactly 10 digits");
         }
 
-        // 5. Unique checks
         if (schoolRepository.existsBySchoolId(req.getSchoolId())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("School already exists with this School ID");
@@ -71,7 +66,6 @@ public class SchoolServiceImpl implements SchoolService {
                     .body("Email already registered");
         }
 
-        // 6. Save School
         School school = new School();
         school.setSchoolName(req.getSchoolName());
         school.setSchoolId(req.getSchoolId());
@@ -81,11 +75,10 @@ public class SchoolServiceImpl implements SchoolService {
         school.setCity(req.getCity());
         school.setState(req.getState());
         school.setPincode(req.getPincode());
-        school.setStatus(SchoolConstants.ACTIVE); // ACTIVE / INACTIVE
+        school.setStatus(SchoolConstants.ACTIVE);
 
         School savedSchool = schoolRepository.save(school);
 
-        // 7. Save User (login) with encrypted password
         User user = new User();
         user.setFullName(req.getSchoolName());
         user.setEmailId(req.getEmail());
@@ -96,7 +89,6 @@ public class SchoolServiceImpl implements SchoolService {
 
         userRepository.save(user);
 
-        // 8. Success response
         SchoolSignupResponse response = new SchoolSignupResponse(
                 201,
                 "School registered successfully",

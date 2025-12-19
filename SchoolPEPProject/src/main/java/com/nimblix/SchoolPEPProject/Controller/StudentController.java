@@ -15,16 +15,11 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/student")
+@RequestMapping("/api/v1/school")
 public class StudentController {
 
     private final StudentService studentService;
 
-
-    /*
-    In this API we are registering the student. It will help to onboard the student, In this we are storing the  student
-    fullName,emailId and password.
-     */
     @PostMapping("/register")
     public ResponseEntity<?> studentRegistration(@RequestBody StudentRegistrationRequest request) {
         Map<String, Object> response = new HashMap<>();
@@ -42,10 +37,6 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
-
- /*
-       This API is used to fetch the student details by using the student I'd.
- */
 
     @GetMapping("/details")
     public ResponseEntity<?> getStudentDetailsByStudentId(@RequestParam Long studentId) {
