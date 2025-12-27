@@ -5,139 +5,38 @@ import com.nimblix.SchoolPEPProject.Model.Student;
 import com.nimblix.SchoolPEPProject.Request.StudentRegistrationRequest;
 import com.nimblix.SchoolPEPProject.Service.StudentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.Map;
 
+
 @RestController
+@RequestMapping("/api/v1/student")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/school")
 public class StudentController {
 
     private final StudentService studentService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> studentRegistration(@RequestBody StudentRegistrationRequest request) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<?> registerStudent(
+            @RequestBody StudentRegistrationRequest request) {
 
-        try {
-            studentService.registerStudent(request);
+        studentService.registerStudent(request);
 
-            response.put(SchoolConstants.STATUS, SchoolConstants.STATUS_SUCCESS);
-            response.put(SchoolConstants.MESSAGE, "Student Registration Successful");
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            response.put(SchoolConstants.STATUS, SchoolConstants.STATUS_FAILURE);
-            response.put(SchoolConstants.MESSAGE, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
+        return ResponseEntity.ok("Student registered successfully");
     }
-
-    @GetMapping("/details")
-    public ResponseEntity<?> getStudentDetailsByStudentId(@RequestParam Long studentId) {
-
-        Map<String, Object> response = new HashMap<>();
-        Student student = studentService.getStudentListByStudentId(studentId);
-
-        if (student == null) {
-            response.put(SchoolConstants.STATUS, SchoolConstants.STATUS_FAILURE);
-            response.put(SchoolConstants.MESSAGE, SchoolConstants.STUDENT_NOT_FOUND);
-            response.put("data", null);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-
-        response.put(SchoolConstants.STATUS, SchoolConstants.STATUS_SUCCESS);
-        response.put(SchoolConstants.MESSAGE, "Student details fetched successfully");
-        response.put("data", student);
-        return ResponseEntity.ok(response);
-    }
+}
 
 
-
-        @PostMapping("/update")
-        public ResponseEntity<?> updateStudent(
-                @RequestParam Long studentId,
-                @RequestBody StudentRegistrationRequest request) {
-
-            Map<String, Object> response = new HashMap<>();
-
-            try {
-                studentService.updateStudentDetails(studentId, request);
-                response.put(SchoolConstants.STATUS, SchoolConstants.STATUS_SUCCESS);
-                response.put(SchoolConstants.MESSAGE, "Student updated successfully");
-                return ResponseEntity.ok(response);
-
-            } catch (Exception e) {
-                response.put(SchoolConstants.STATUS, SchoolConstants.STATUS_FAILURE);
-                response.put(SchoolConstants.MESSAGE, e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
-        }
-
-
-
-        @PostMapping("/delete")
-        public ResponseEntity<?> deleteStudent(@RequestParam Long studentId) {
-            Map<String, Object> response = new HashMap<>();
-
-            try {
-                studentService.deleteStudent(studentId);
-                response.put(SchoolConstants.STATUS, SchoolConstants.STATUS_SUCCESS);
-                response.put(SchoolConstants.MESSAGE, "Student deleted successfully");
-                return ResponseEntity.ok(response);
-
-            } catch (Exception e) {
-                response.put(SchoolConstants.STATUS, SchoolConstants.STATUS_FAILURE);
-                response.put(SchoolConstants.MESSAGE, e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
-        }
-
-
-
-        @PutMapping("/update")
-        public ResponseEntity<?> updateStudentPut(
-                @RequestParam Long studentId,
-                @RequestBody StudentRegistrationRequest request) {
-
-            Map<String, Object> response = new HashMap<>();
-
-            try {
-                studentService.updateStudentDetails(studentId, request);
-                response.put(SchoolConstants.STATUS, SchoolConstants.STATUS_SUCCESS);
-                response.put(SchoolConstants.MESSAGE, "Student updated successfully (PUT)");
-                return ResponseEntity.ok(response);
-
-            } catch (Exception e) {
-                response.put(SchoolConstants.STATUS, SchoolConstants.STATUS_FAILURE);
-                response.put(SchoolConstants.MESSAGE, e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
-        }
-
-
-
-        @DeleteMapping("/delete")
-        public ResponseEntity<?> deleteStudentDelete(@RequestParam Long studentId) {
-            Map<String, Object> response = new HashMap<>();
-
-            try {
-                studentService.deleteStudent(studentId);
-                response.put(SchoolConstants.STATUS, SchoolConstants.STATUS_SUCCESS);
-                response.put(SchoolConstants.MESSAGE, "Student deleted successfully (DELETE)");
-                return ResponseEntity.ok(response);
-
-            } catch (Exception e) {
-                response.put(SchoolConstants.STATUS, SchoolConstants.STATUS_FAILURE);
-                response.put(SchoolConstants.MESSAGE, e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
-        }
-    }
 
 
