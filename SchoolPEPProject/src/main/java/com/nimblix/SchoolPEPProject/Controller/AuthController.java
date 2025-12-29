@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -33,7 +33,6 @@ public class AuthController {
                         .body(Collections.singletonMap(SchoolConstants.MESSAGE, "Email is required."));
             }
 
-            // Fetch from DB
             User user = userRepository
                     .findByEmailId(request.getEmail())
                     .filter(u -> u.getStatus().equalsIgnoreCase(SchoolConstants.ACTIVE))
@@ -53,7 +52,6 @@ public class AuthController {
                             .body(Collections.singletonMap("message", "Password is required for Student login."));
                 }
 
-                // Authenticate
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
                                 request.getEmail(),
@@ -63,19 +61,16 @@ public class AuthController {
             }
 
             else {
-                // No password check — allow login by email only
                 System.out.println(role + " logged in using email only");
             }
 
-            // Generate JWT token
             var userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-            String token = jwtUtil.generateToken(userDetails);
+            String token = jwtUtil.generateToken
+                    (userDetails);
 
-            // Update login status
             user.setIsLogin(true);
             userRepository.save(user);
 
-            // Build response
             AuthStudentResponse resp = new AuthStudentResponse();
             resp.setUserId(user.getId());
             resp.setFullName(user.getFullName());
