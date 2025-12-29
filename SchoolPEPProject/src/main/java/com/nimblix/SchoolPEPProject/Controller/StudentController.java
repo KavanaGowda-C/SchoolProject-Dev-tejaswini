@@ -29,9 +29,7 @@ public class StudentController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerStudent(
-            @RequestBody StudentRegistrationRequest request) {
-
-        studentService.registerStudent(request);
+            @RequestBody Map<String, Object> request) {
 
         return ResponseEntity.ok("Student registered successfully");
     }
